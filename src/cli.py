@@ -8,6 +8,8 @@ from src.transform.curated import build_curated
 from src.common.errors import PipelineStageError
 from src.load.postgres import upsert_curated
 from src.validate.quality import validate_curated
+from src.benchmark.storage import run_benchmark, write_partitioned_parquet
+from src.load.postgres import load_partition
 
 
 def run_stage(stage_name: str, func, *args, **kwargs):
@@ -17,6 +19,7 @@ def run_stage(stage_name: str, func, *args, **kwargs):
     except Exception as e:
         raise PipelineStageError(stage_name, e) from e
     
+
 def main():
     parser = argparse.ArgumentParser(description='DSS150P modular pipeline')
     sub = parser.add_subparsers(dest='command', required=True)
@@ -68,7 +71,7 @@ def main():
     if args.command == 'validate':
         run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
         curated_path = (
-        PROJECT_ROOT
+            PROJECT_ROOT
             / 'data'
             / 'curated'
             / f'sales_order_lines_run_id={run_id}.parquet'
@@ -84,6 +87,27 @@ def main():
             raise SystemExit(1)
 
         print(f'Validation PASSED: {len(df)} curated rows checked.')
+        return
+
+    if args.command == 'benchmark':
+        run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
+        curated_path = PROJECT_ROOT / 'data' / 'curated' / f'sales_order_lines_run_id={run_id}.parquet'
+        results = run_stage('benchmark', run_benchmark, curated_path,
+                             PROJECT_ROOT / 'data' / 'benchmarks', args.repeats)
+        print(results.to_string(index=False))
+        return
+
+    if args.command == 'load-partition':
+        run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
+        curated_path = PROJECT_ROOT / 'data' / 'curated' / f'sales_order_lines_run_id={run_id}.parquet'
+        df = pd.read_parquet(curated_path)
+        import pandas as _pd
+        df['order_year'] = _pd.to_datetime(df['order_timestamp']).dt.year
+        df['order_month'] = _pd.to_datetime(df['order_timestamp']).dt.month
+        subset = df[(df['order_year'] == args.year) & (df['order_month'] == args.month)]
+        subset = subset.drop(columns=['order_year', 'order_month'])
+        affected = run_stage('load-partition', load_partition, subset, args.year, args.month, run_id)
+        print(f'Partition {args.year}-{args.month:02d}: {len(subset)} rows, {affected} affected')
         return
 
     if args.command == 'run-all':
