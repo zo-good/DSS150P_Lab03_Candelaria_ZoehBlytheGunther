@@ -1,10 +1,12 @@
 import argparse
+import pandas as pd
 from src.config import PROJECT_ROOT, DB, SETTINGS
 from src.common.audit import new_run_id
 from src.extract.files import extract_sources
 from src.transform.staging import build_staging
 from src.transform.curated import build_curated
 from src.common.errors import PipelineStageError
+from src.load.postgres import upsert_curated
 
 
 def run_stage(stage_name: str, func, *args, **kwargs):
@@ -54,6 +56,14 @@ def main():
         print(f'curated quarantine: {len(curated_quarantine)} rows')
         return
     
+    if args.command == 'load':
+        run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
+        curated_path = PROJECT_ROOT / 'data' / 'curated' / f'sales_order_lines_run_id={run_id}.parquet'
+        df = pd.read_parquet(curated_path)
+        affected = run_stage('load', upsert_curated, df, run_id)
+        print(f'Rows affected (inserted or updated): {affected}')
+        return
+
     # TODO: Wire the modular functions together. Keep orchestration logic thin.
     raise NotImplementedError(f'Wire command: {args.command}')
 
