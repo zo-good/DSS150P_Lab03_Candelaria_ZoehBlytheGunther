@@ -1,3 +1,4 @@
+import os
 import argparse
 import pandas as pd
 from src.config import PROJECT_ROOT, DB, SETTINGS
@@ -40,7 +41,7 @@ def main():
         return
 
     if args.command == 'extract':
-        run_id = new_run_id()
+        run_id = os.getenv('PIPELINE_RUN_ID') or new_run_id()
         raw_dir = run_stage('extract', extract_sources, run_id)
         (PROJECT_ROOT / 'state').mkdir(exist_ok=True)
         (PROJECT_ROOT / 'state' / 'current_run_id.txt').write_text(run_id)
