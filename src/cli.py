@@ -65,10 +65,10 @@ def main():
         print(f'Rows affected (inserted or updated): {affected}')
         return
 
-        if args.command == 'validate':
-            run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
-            curated_path = (
-            PROJECT_ROOT
+    if args.command == 'validate':
+        run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
+        curated_path = (
+        PROJECT_ROOT
             / 'data'
             / 'curated'
             / f'sales_order_lines_run_id={run_id}.parquet'

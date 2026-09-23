@@ -1,86 +1,39 @@
 from src.config import SETTINGS
 
+REQUIRED_AUDIT_FIELDS = ['source_updated_at', 'pipeline_run_id', 'processed_at_utc', 'record_hash']
+
 
 def validate_curated(df) -> list[str]:
     """Return a list of human-readable validation errors."""
     errors = []
 
-    # Required business key
-    if "order_id" not in df.columns:
-        errors.append("Missing required column: order_id")
-    else:
-        if df["order_id"].isna().any():
-            errors.append("order_id contains null values")
+    null_ids = df['order_id'].isna().sum()
+    if null_ids > 0:
+        errors.append(f'{null_ids} row(s) have a null order_id')
 
-        if df["order_id"].duplicated().any():
-            errors.append("Duplicate order_id values detected")
+    dupe_ids = df['order_id'].duplicated().sum()
+    if dupe_ids > 0:
+        errors.append(f'{dupe_ids} duplicate order_id value(s) found in curated data')
 
-    # Quantity validation
-    if "quantity" not in df.columns:
-        errors.append("Missing required column: quantity")
-    else:
-        min_qty = SETTINGS["quality"]["min_quantity"]
-        max_qty = SETTINGS["quality"]["max_quantity"]
+    min_qty = SETTINGS['quality']['min_quantity']
+    max_qty = SETTINGS['quality']['max_quantity']
+    bad_qty = df[df['quantity'].isna() | (df['quantity'] < min_qty) | (df['quantity'] > max_qty)]
+    if len(bad_qty) > 0:
+        errors.append(f'{len(bad_qty)} row(s) have quantity outside {min_qty}..{max_qty} or null')
 
-        if df["quantity"].isna().any():
-            errors.append("quantity contains null values")
+    for col in ['gross_amount', 'discount_amount', 'net_amount']:
+        negative = df[df[col] < 0]
+        if len(negative) > 0:
+            errors.append(f'{len(negative)} row(s) have negative {col}')
 
-        invalid_quantity = (
-            df["quantity"].notna()
-            & (
-                (df["quantity"] < min_qty)
-                | (df["quantity"] > max_qty)
-            )
-        )
+    allowed_statuses = set(SETTINGS['quality']['allowed_order_statuses'])
+    bad_status = df[~df['status'].isin(allowed_statuses)]
+    if len(bad_status) > 0:
+        errors.append(f'{len(bad_status)} row(s) have a status outside the allowed set')
 
-        if invalid_quantity.any():
-            errors.append(
-                f"quantity contains values outside {min_qty}..{max_qty}"
-            )
-
-    # Status validation
-    if "status" not in df.columns:
-        errors.append("Missing required column: status")
-    else:
-        allowed_statuses = set(
-            SETTINGS["quality"]["allowed_order_statuses"]
-        )
-
-        invalid_status = ~df["status"].isin(allowed_statuses)
-
-        if invalid_status.any():
-            errors.append("status contains invalid values")
-
-    # Amount validation
-    amount_columns = [
-        "gross_amount",
-        "discount_amount",
-        "net_amount",
-    ]
-
-    for column in amount_columns:
-        if column not in df.columns:
-            errors.append(f"Missing required column: {column}")
-            continue
-
-        if df[column].isna().any():
-            errors.append(f"{column} contains null values")
-
-        if (df[column] < 0).any():
-            errors.append(f"{column} contains negative values")
-
-    # Required audit columns
-    audit_columns = [
-        "source_updated_at",
-        "pipeline_run_id",
-        "processed_at_utc",
-        "record_hash",
-    ]
-
-    for column in audit_columns:
-        if column not in df.columns:
-            errors.append(f"Missing required audit column: {column}")
-        elif df[column].isna().any():
-            errors.append(f"{column} contains null values")
+    for field in REQUIRED_AUDIT_FIELDS:
+        missing = df[field].isna().sum()
+        if missing > 0:
+            errors.append(f'{missing} row(s) missing required audit field: {field}')
 
     return errors
