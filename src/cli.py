@@ -3,6 +3,7 @@ from src.config import PROJECT_ROOT, DB, SETTINGS
 from src.common.audit import new_run_id
 from src.extract.files import extract_sources
 from src.transform.staging import build_staging
+from src.transform.curated import build_curated
 
 
 def main():
@@ -36,10 +37,13 @@ def main():
     if args.command == 'transform':
         run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
         raw_dir = PROJECT_ROOT / 'data' / 'raw' / f'run_id={run_id}'
-        staging, quarantine_df = build_staging(raw_dir, run_id)
+        staging, staging_quarantine = build_staging(raw_dir, run_id)
+        curated, curated_quarantine = build_curated(staging, run_id)
         for name, df in staging.items():
             print(f'{name}: {len(df)} valid rows')
-        print(f'quarantine: {len(quarantine_df)} rows')
+        print(f'staging quarantine: {len(staging_quarantine)} rows')
+        print(f'curated: {len(curated)} valid rows')
+        print(f'curated quarantine: {len(curated_quarantine)} rows')
         return
     
     # TODO: Wire the modular functions together. Keep orchestration logic thin.
