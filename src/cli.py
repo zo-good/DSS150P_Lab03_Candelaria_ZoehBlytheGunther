@@ -4,8 +4,16 @@ from src.common.audit import new_run_id
 from src.extract.files import extract_sources
 from src.transform.staging import build_staging
 from src.transform.curated import build_curated
+from src.common.errors import PipelineStageError
 
 
+def run_stage(stage_name: str, func, *args, **kwargs):
+    """Run a pipeline stage, wrapping any failure with stage context."""
+    try:
+        return func(*args, **kwargs)
+    except Exception as e:
+        raise PipelineStageError(stage_name, e) from e
+    
 def main():
     parser = argparse.ArgumentParser(description='DSS150P modular pipeline')
     sub = parser.add_subparsers(dest='command', required=True)
@@ -27,7 +35,7 @@ def main():
 
     if args.command == 'extract':
         run_id = new_run_id()
-        raw_dir = extract_sources(run_id)
+        raw_dir = run_stage('extract', extract_sources, run_id)
         (PROJECT_ROOT / 'state').mkdir(exist_ok=True)
         (PROJECT_ROOT / 'state' / 'current_run_id.txt').write_text(run_id)
         print(f'run_id={run_id}')
@@ -37,8 +45,8 @@ def main():
     if args.command == 'transform':
         run_id = (PROJECT_ROOT / 'state' / 'current_run_id.txt').read_text().strip()
         raw_dir = PROJECT_ROOT / 'data' / 'raw' / f'run_id={run_id}'
-        staging, staging_quarantine = build_staging(raw_dir, run_id)
-        curated, curated_quarantine = build_curated(staging, run_id)
+        staging, staging_quarantine = run_stage('transform.staging', build_staging, raw_dir, run_id)
+        curated, curated_quarantine = run_stage('transform.curated', build_curated, staging, run_id)
         for name, df in staging.items():
             print(f'{name}: {len(df)} valid rows')
         print(f'staging quarantine: {len(staging_quarantine)} rows')
