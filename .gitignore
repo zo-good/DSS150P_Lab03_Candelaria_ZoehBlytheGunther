@@ -8,3 +8,4 @@ data/benchmarks/
 data/partitioned/
 __pycache__/
 *.pyc
+logs/
