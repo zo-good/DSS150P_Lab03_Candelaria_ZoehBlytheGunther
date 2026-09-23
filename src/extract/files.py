@@ -4,12 +4,12 @@ from src.config import path_for
 
 
 def extract_sources(run_id: str) -> Path:
-    """Copy immutable source snapshots into a run-specific raw directory.
+    """Copy immutable source snapshots into a run-specific raw directory."""
+    raw_dir = path_for('raw_dir') / f'run_id={run_id}'
+    raw_dir.mkdir(parents=True, exist_ok=True)
 
-    TODO:
-    1. Create data/raw/run_id=<run_id>/.
-    2. Copy customers.csv, products.json, and orders.csv from data/source/.
-    3. Return the run-specific raw path.
-    4. Do not modify source files in place.
-    """
-    raise NotImplementedError('Implement Week 5 raw extraction')
+    source_dir = path_for('source_dir')
+    for filename in ['customers.csv', 'products.json', 'orders.csv']:
+        shutil.copy2(source_dir / filename, raw_dir / filename)
+
+    return raw_dir

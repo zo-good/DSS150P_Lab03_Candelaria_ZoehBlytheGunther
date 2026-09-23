@@ -1,6 +1,7 @@
 import argparse
 from src.config import PROJECT_ROOT, DB, SETTINGS
 from src.common.audit import new_run_id
+from src.extract.files import extract_sources
 
 
 def main():
@@ -22,8 +23,18 @@ def main():
         print('Configured source=', SETTINGS['pipeline']['source_dir'])
         return
 
+    if args.command == 'extract':
+        run_id = new_run_id()
+        raw_dir = extract_sources(run_id)
+        (PROJECT_ROOT / 'state').mkdir(exist_ok=True)
+        (PROJECT_ROOT / 'state' / 'current_run_id.txt').write_text(run_id)
+        print(f'run_id={run_id}')
+        print(f'Raw snapshot created at: {raw_dir}')
+        return
+
     # TODO: Wire the modular functions together. Keep orchestration logic thin.
     raise NotImplementedError(f'Wire command: {args.command}')
+
 
 if __name__ == '__main__':
     main()
