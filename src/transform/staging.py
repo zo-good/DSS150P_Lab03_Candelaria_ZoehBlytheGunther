@@ -2,7 +2,10 @@ import json
 from pathlib import Path
 import pandas as pd
 from src.common.audit import utc_now_iso
-from src.config import path_for, SETTINGS
+from src.common.runtime import (
+    atomic_write_parquet, quarantine_path_for, staging_dir_for,
+)
+from src.config import SETTINGS
 
 
 def _dedupe_latest(df: pd.DataFrame, key: str, updated_col: str = 'updated_at') -> pd.DataFrame:
@@ -106,8 +109,24 @@ def _clean_orders(raw_dir: Path):
     return valid_df, quarantine
 
 
+def count_raw_rows(raw_dir) -> dict:
+    """Count the rows physically present in the raw snapshot, before any cleaning."""
+    raw_dir = Path(raw_dir)
+    with (raw_dir / 'products.json').open(encoding='utf-8') as f:
+        products = len(json.load(f))
+    return {
+        'customers': len(pd.read_csv(raw_dir / 'customers.csv', usecols=['customer_id'])),
+        'products': products,
+        'orders': len(pd.read_csv(raw_dir / 'orders.csv', usecols=['order_id'])),
+    }
+
+
 def build_staging(raw_dir, run_id: str):
-    """Create cleaned, typed staging datasets."""
+    """Create cleaned, typed staging datasets.
+
+    Outputs go to ``data/staging/run_id=<run_id>/`` (never a shared fixed path)
+    and are written atomically, so concurrent runs cannot overwrite each other.
+    """
     raw_dir = Path(raw_dir)
 
     customers_df, customers_q = _clean_customers(raw_dir)
@@ -118,17 +137,14 @@ def build_staging(raw_dir, run_id: str):
     products_df = _add_audit_columns(products_df, run_id)
     orders_df = _add_audit_columns(orders_df, run_id)
 
-    staging_dir = path_for('staging_dir')
-    staging_dir.mkdir(parents=True, exist_ok=True)
-    customers_df.to_parquet(staging_dir / 'customers.parquet', index=False)
-    products_df.to_parquet(staging_dir / 'products.parquet', index=False)
-    orders_df.to_parquet(staging_dir / 'orders.parquet', index=False)
+    staging_dir = staging_dir_for(run_id)
+    atomic_write_parquet(customers_df, staging_dir / 'customers.parquet')
+    atomic_write_parquet(products_df, staging_dir / 'products.parquet')
+    atomic_write_parquet(orders_df, staging_dir / 'orders.parquet')
 
     quarantine_df = pd.DataFrame(customers_q + products_q + orders_q)
     if not quarantine_df.empty:
-        quarantine_dir = path_for('quarantine_dir')
-        quarantine_dir.mkdir(parents=True, exist_ok=True)
-        quarantine_df.to_parquet(quarantine_dir / f'staging_run_id={run_id}.parquet', index=False)
+        atomic_write_parquet(quarantine_df, quarantine_path_for('staging', run_id))
 
     staging = {'customers': customers_df, 'products': products_df, 'orders': orders_df}
     return staging, quarantine_df

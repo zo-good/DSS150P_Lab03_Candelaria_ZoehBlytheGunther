@@ -1,0 +1,26 @@
+$ python -m src.cli partition-write --run-id evidence_run
+Partitioned dataset written to: /home/claude/lab3-student/data/partitioned/run_id=evidence_run
+21 partitions, 49897 rows
+ order_year  order_month  files  rows
+       2025            1      1  2458
+       2025            2      1  2283
+       2025            3      1  2456
+       2025            4      1  2410
+       2025            5      1  2540
+       2025            6      1  2467
+       2025            7      1  2459
+       2025            8      1  2510
+       2025            9      1  2427
+       2025           10      1  2451
+       2025           11      1  2366
+       2025           12      1  2492
+       2026            1      1  2506
+       2026            2      1  2286
+       2026            3      1  2474
+       2026            4      1  2379
+       2026            5      1  2500
+       2026            6      1  2448
+       2026            7      1  2494
+       2026            8      1  2540
+       2026            9      1   951
+[exit code: 0]

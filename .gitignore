@@ -8,4 +8,15 @@ data/benchmarks/
 data/partitioned/
 __pycache__/
 *.pyc
-logs/
+/logs/
+
+# Run state: written per run at runtime, never committed (a tracked, shared
+# current_run_id.txt was a race hazard and is gone).
+state/runs/
+state/locks/
+state/latest_run.txt
+state/current_run_id.txt
+
+# Test / tool caches
+.pytest_cache/
+.coverage

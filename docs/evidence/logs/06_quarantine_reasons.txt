@@ -1,0 +1,11 @@
+$ python scripts/quarantine_summary.py --run-id evidence_run
+--- staging quarantine: 3 rows ---
+  source                         reason  rows
+  orders         quantity outside 1..20     1
+  orders      status not in allowed set     1
+products invalid or negative unit_price     1
+--- curated quarantine: 101 rows ---
+      source                                  reason  rows
+curated_join customer_id <id> not found in customers     1
+curated_join   product_id <id> not found in products   100
+[exit code: 0]

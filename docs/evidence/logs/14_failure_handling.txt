@@ -1,0 +1,32 @@
+$ POSTGRES_PORT=1 python -m src.cli load --run-id evidence_run   # nothing listens on port 1
+ERROR [load] OperationalError: connection failed: connection to server at "127.0.0.1", port 1 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+[exit code: 1]
+$ POSTGRES_PORT=abc python -m src.cli validate-env --skip-db
+PROJECT_ROOT= /home/claude/lab3-student
+DB host/database= localhost dss150p
+Configured source= data/source
+[ OK ] .env file: found
+[ OK ] settings.yml [pipeline]: all required keys present
+[ OK ] settings.yml [quality]: all required keys present
+[ OK ] settings.yml [storage_benchmark]: all required keys present
+[ OK ] quality thresholds: quantity 1..20, 6 allowed statuses
+[ OK ] benchmark settings: repeats=5, filter_status=DELIVERED
+[ OK ] environment variables: all required variables are set
+[FAIL] POSTGRES_PORT: 'abc' is not a valid port (1-65535)
+[WARN] POSTGRES_PASSWORD: still the placeholder 'change_me'; fine for a local lab only
+[ OK ] source customers.csv: header has all 8 expected columns
+[ OK ] source products.json: 601 records
+[ OK ] source orders.csv: header has all 9 expected columns
+[ OK ] writable raw_dir: /home/claude/lab3-student/data/raw
+[ OK ] writable staging_dir: /home/claude/lab3-student/data/staging
+[ OK ] writable curated_dir: /home/claude/lab3-student/data/curated
+[ OK ] writable quarantine_dir: /home/claude/lab3-student/data/quarantine
+[ OK ] writable benchmark_dir: /home/claude/lab3-student/data/benchmarks
+[ OK ] writable partition_dir: /home/claude/lab3-student/data/partitioned
+[ OK ] writable state: /home/claude/lab3-student/state
+validate-env: 17 ok, 1 warning(s), 1 failure(s)
+[exit code: 1]
+$ python -m src.cli transform --run-id never_extracted
+ERROR [transform.staging] FileNotFoundError: no raw snapshot for run never_extracted at /home/claude/lab3-student/data/raw/run_id=never_extracted; run extract first
+[exit code: 1]

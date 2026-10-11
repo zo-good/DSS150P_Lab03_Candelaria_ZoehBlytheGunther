@@ -1,0 +1,33 @@
+$ psql -c "TRUNCATE curated.sales_order_lines"   # start from an empty table
+$ (python -m src.cli run-all --run-id conc_c & ... conc_d & ... conc_e & wait)
+--- conc_c ---
+run_id=conc_c
+Raw snapshot created at: data/raw/run_id=conc_c
+Rows affected (inserted or updated): 0
+Validation PASSED: 49897 curated rows checked; 49897 of them confirmed present in PostgreSQL (scope: full).
+Pipeline completed successfully.
+[conc_c exit code: 0]
+--- conc_d ---
+run_id=conc_d
+Raw snapshot created at: data/raw/run_id=conc_d
+Rows affected (inserted or updated): 49897
+Validation PASSED: 49897 curated rows checked; 49897 of them confirmed present in PostgreSQL (scope: full).
+Pipeline completed successfully.
+[conc_d exit code: 0]
+--- conc_e ---
+run_id=conc_e
+Raw snapshot created at: data/raw/run_id=conc_e
+Rows affected (inserted or updated): 0
+Validation PASSED: 49897 curated rows checked; 49897 of them confirmed present in PostgreSQL (scope: full).
+Pipeline completed successfully.
+[conc_e exit code: 0]
+--- per-run files ---
+data/curated/sales_order_lines_run_id=conc_c.parquet
+data/curated/sales_order_lines_run_id=conc_d.parquet
+data/curated/sales_order_lines_run_id=conc_e.parquet
+data/staging/run_id=conc_c
+data/staging/run_id=conc_d
+data/staging/run_id=conc_e
+state/runs/conc_c.json
+state/runs/conc_d.json
+state/runs/conc_e.json

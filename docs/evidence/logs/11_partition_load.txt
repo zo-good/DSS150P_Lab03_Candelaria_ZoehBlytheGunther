@@ -1,0 +1,13 @@
+$ psql -c "TRUNCATE curated.sales_order_lines, audit.partition_loads"   # start from an empty table
+[exit code: 0]
+$ python -m src.cli load-partition --run-id evidence_run --year 2025 --month 5
+Partition 2025-05: 2540 rows, 2540 affected
+PostgreSQL now holds 2540 rows for 2025-05
+[exit code: 0]
+$ python -m src.cli load-partition --run-id evidence_run --year 2025 --month 5   # rerun
+Partition 2025-05: 2540 rows, 0 affected
+PostgreSQL now holds 2540 rows for 2025-05
+[exit code: 0]
+$ python -m src.cli validate --run-id evidence_run   # scoped to the loaded month
+Validation PASSED: 49897 curated rows checked; 2540 of them confirmed present in PostgreSQL (scope: 2025-05).
+[exit code: 0]

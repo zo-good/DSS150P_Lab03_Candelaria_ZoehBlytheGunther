@@ -1,0 +1,44 @@
+{
+  "created_at_utc": "2026-10-11T04:47:48.326353+00:00",
+  "run_id": "evidence_run",
+  "stages": {
+    "extract": {
+      "raw_dir": "/home/claude/lab3-student/data/raw/run_id=evidence_run",
+      "raw_rows": {
+        "customers": 3003,
+        "orders": 50005,
+        "products": 601
+      },
+      "recorded_at_utc": "2026-10-11T04:47:48.326377+00:00",
+      "status": "success"
+    },
+    "load": {
+      "recorded_at_utc": "2026-10-11T04:47:53.168947+00:00",
+      "rows_affected": 49897,
+      "rows_in_file": 49897,
+      "scope": "full",
+      "status": "success"
+    },
+    "transform": {
+      "curated": 49897,
+      "curated_quarantine": 101,
+      "recorded_at_utc": "2026-10-11T04:47:50.941929+00:00",
+      "staging_quarantine": 3,
+      "staging_valid": {
+        "customers": 3000,
+        "orders": 49998,
+        "products": 599
+      },
+      "status": "success"
+    },
+    "validate": {
+      "database_checked": true,
+      "database_rows_checked": 49897,
+      "database_scope": "full",
+      "errors": [],
+      "recorded_at_utc": "2026-10-11T04:47:53.313926+00:00",
+      "rows_checked": 49897,
+      "status": "success"
+    }
+  }
+}

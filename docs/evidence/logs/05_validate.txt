@@ -1,0 +1,3 @@
+$ python -m src.cli validate --run-id evidence_run
+Validation PASSED: 49897 curated rows checked; 49897 of them confirmed present in PostgreSQL (scope: full).
+[exit code: 0]

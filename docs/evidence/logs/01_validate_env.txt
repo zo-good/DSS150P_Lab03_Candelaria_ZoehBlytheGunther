@@ -1,0 +1,26 @@
+$ python -m src.cli validate-env
+PROJECT_ROOT= /home/claude/lab3-student
+DB host/database= localhost dss150p
+Configured source= data/source
+[ OK ] .env file: found
+[ OK ] settings.yml [pipeline]: all required keys present
+[ OK ] settings.yml [quality]: all required keys present
+[ OK ] settings.yml [storage_benchmark]: all required keys present
+[ OK ] quality thresholds: quantity 1..20, 6 allowed statuses
+[ OK ] benchmark settings: repeats=5, filter_status=DELIVERED
+[ OK ] environment variables: all required variables are set
+[WARN] POSTGRES_PASSWORD: still the placeholder 'change_me'; fine for a local lab only
+[ OK ] source customers.csv: header has all 8 expected columns
+[ OK ] source products.json: 601 records
+[ OK ] source orders.csv: header has all 9 expected columns
+[ OK ] writable raw_dir: /home/claude/lab3-student/data/raw
+[ OK ] writable staging_dir: /home/claude/lab3-student/data/staging
+[ OK ] writable curated_dir: /home/claude/lab3-student/data/curated
+[ OK ] writable quarantine_dir: /home/claude/lab3-student/data/quarantine
+[ OK ] writable benchmark_dir: /home/claude/lab3-student/data/benchmarks
+[ OK ] writable partition_dir: /home/claude/lab3-student/data/partitioned
+[ OK ] writable state: /home/claude/lab3-student/state
+[ OK ] database connection: localhost:5432/dss150p
+[ OK ] database tables: curated.sales_order_lines, audit.partition_loads, audit.pipeline_runs
+validate-env: 19 ok, 1 warning(s), 0 failure(s)
+[exit code: 0]

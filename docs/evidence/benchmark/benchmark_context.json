@@ -1,0 +1,13 @@
+{
+  "measured_at_utc": "2026-10-11T04:48:18.197821+00:00",
+  "os": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "cpu_model": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+  "cpu_count": 2,
+  "ram_bytes": 8419655680,
+  "python": "3.11.17",
+  "pandas": "2.2.3",
+  "pyarrow": "17.0.0",
+  "psycopg": "3.2.3",
+  "postgres_server_version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+}

@@ -1,0 +1,14 @@
+$ python -m src.cli run-all --run-id evidence_run
+run_id=evidence_run
+Raw snapshot created at: /home/claude/lab3-student/data/raw/run_id=evidence_run
+raw rows: customers=3003 products=601 orders=50005
+customers: 3000 valid rows
+products: 599 valid rows
+orders: 49998 valid rows
+staging quarantine: 3 rows
+curated: 49897 valid rows
+curated quarantine: 101 rows
+Rows affected (inserted or updated): 49897
+Validation PASSED: 49897 curated rows checked; 49897 of them confirmed present in PostgreSQL (scope: full).
+Pipeline completed successfully.
+[exit code: 0]

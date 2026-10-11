@@ -1,0 +1,7 @@
+$ psql -c "SELECT to_char(order_timestamp AT TIME ZONE 'UTC','YYYY-MM') AS month_utc, count(*) AS rows FROM curated.sales_order_lines GROUP BY 1 ORDER BY 1"
+ month_utc | rows 
+-----------+------
+ 2025-05   | 2540
+(1 row)
+
+[exit code: 0]
