@@ -1,0 +1,7 @@
+$ psql -c "SELECT partition_key, row_count, pipeline_run_id FROM audit.partition_loads"
+ partition_key | row_count | pipeline_run_id 
+---------------+-----------+-----------------
+ 2025-05       |      2540 | evidence_run
+(1 row)
+
+[exit code: 0]

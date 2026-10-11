@@ -1,0 +1,7 @@
+storage_type,file_size_bytes,write_seconds,full_read_seconds,filtered_read_seconds,row_count,notes,scenario,filtered_row_count,repeats
+CSV,14378528,0.9117,0.2409,0.2288,49897,Plain text; every read re-parses and re-infers types; filter applied after reading everything.,full_table,8355,5
+JSON Lines,29859219,0.6776,0.6332,0.6719,49897,One JSON object per line; key names repeated on every row; filter applied after reading everything.,full_table,8355,5
+Parquet,5458269,0.0976,0.0582,0.0257,49897,Columnar + snappy compression; schema stored in file; filter pushed into the reader.,full_table,8355,5
+PostgreSQL,15818752,0.7596,1.2134,0.2068,49897,Temp copy of curated.sales_order_lines holding this run only; write = COPY; size = pg_total_relation_size (table + primary-key index); no index on status.,full_table,8355,5
+"Parquet single file, one-month read",5458269,,,0.0601,49897,"Baseline for partitioning: read the whole file, then keep 2025-05.",partition_2025-05,2540,5
+"Parquet partitioned, one-month read",6588492,0.1123,,0.0074,49897,Only the 2025-05 partition directory is opened (1 of 21 files); write_seconds = writing the whole partitioned dataset.,partition_2025-05,2540,5

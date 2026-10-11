@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from src.common.audit import utc_now_iso, record_hash
-from src.config import path_for
+from src.common.runtime import atomic_write_parquet, curated_path_for, quarantine_path_for
 
 HASH_KEYS = [
     'order_id', 'customer_id', 'product_id', 'order_timestamp', 'source_updated_at',
@@ -67,14 +67,10 @@ def build_curated(staging: dict, run_id: str):
 
     curated = curated[KEEP_COLUMNS]
 
-    curated_dir = path_for('curated_dir')
-    curated_dir.mkdir(parents=True, exist_ok=True)
-    curated.to_parquet(curated_dir / f'sales_order_lines_run_id={run_id}.parquet', index=False)
+    atomic_write_parquet(curated, curated_path_for(run_id))
 
     quarantine_df = pd.DataFrame(quarantine_rows)
     if not quarantine_df.empty:
-        quarantine_dir = path_for('quarantine_dir')
-        quarantine_dir.mkdir(parents=True, exist_ok=True)
-        quarantine_df.to_parquet(quarantine_dir / f'curated_run_id={run_id}.parquet', index=False)
+        atomic_write_parquet(quarantine_df, quarantine_path_for('curated', run_id))
 
     return curated, quarantine_df

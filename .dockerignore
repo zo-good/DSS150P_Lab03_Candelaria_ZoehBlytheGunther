@@ -8,4 +8,5 @@ data/staging/
 data/curated/
 data/quarantine/
 data/benchmarks/
-data/partitioned/
+data/partitioned/state/
+.pytest_cache/

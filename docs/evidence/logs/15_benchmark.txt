@@ -1,0 +1,10 @@
+$ python -m src.cli benchmark --run-id evidence_run --repeats 5 --evidence-dir docs/evidence/benchmark
+                       storage_type  file_size_bytes write_seconds full_read_seconds  filtered_read_seconds  row_count          scenario  filtered_row_count  repeats
+                                CSV         14378528        0.9117            0.2409                 0.2288      49897        full_table                8355        5
+                         JSON Lines         29859219        0.6776            0.6332                 0.6719      49897        full_table                8355        5
+                            Parquet          5458269        0.0976            0.0582                 0.0257      49897        full_table                8355        5
+                         PostgreSQL         15818752        0.7596            1.2134                 0.2068      49897        full_table                8355        5
+Parquet single file, one-month read          5458269                                                 0.0601      49897 partition_2025-05                2540        5
+Parquet partitioned, one-month read          6588492        0.1123                                   0.0074      49897 partition_2025-05                2540        5
+Results saved in: /home/claude/lab3-student/data/benchmarks/run_id=evidence_run
+[exit code: 0]

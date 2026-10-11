@@ -1,0 +1,4 @@
+$ python -m src.cli partition-read --run-id evidence_run --year 2025 --month 5
+Partition 2025-05: read 2540 rows (expected 2540) from 1 of 21 files across 21 partitions; pruned=True
+Verification PASSED.
+[exit code: 0]

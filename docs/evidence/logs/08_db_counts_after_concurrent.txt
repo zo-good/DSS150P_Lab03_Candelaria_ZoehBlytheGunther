@@ -1,0 +1,7 @@
+$ psql -c "SELECT count(*) AS total_rows, count(DISTINCT order_id) AS distinct_order_ids, count(DISTINCT pipeline_run_id) AS runs_that_wrote_rows FROM curated.sales_order_lines"
+ total_rows | distinct_order_ids | runs_that_wrote_rows 
+------------+--------------------+----------------------
+      49897 |              49897 |                    1
+(1 row)
+
+[exit code: 0]

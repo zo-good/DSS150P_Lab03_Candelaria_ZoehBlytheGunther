@@ -1,0 +1,3 @@
+$ python -m src.cli load --run-id evidence_run
+Rows affected (inserted or updated): 0
+[exit code: 0]

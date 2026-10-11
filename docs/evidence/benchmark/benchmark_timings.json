@@ -1,0 +1,152 @@
+{
+  "run_settings": {
+    "curated_file": "/home/claude/lab3-student/data/curated/sales_order_lines_run_id=evidence_run.parquet",
+    "repeats": 5,
+    "warmup_runs": 1,
+    "statistic": "median",
+    "filter_status": "DELIVERED",
+    "postgres_included": true,
+    "partition_benchmarked": "2025-05"
+  },
+  "context": {
+    "measured_at_utc": "2026-10-11T04:48:18.197821+00:00",
+    "os": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cpu_model": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+    "cpu_count": 2,
+    "ram_bytes": 8419655680,
+    "python": "3.11.17",
+    "pandas": "2.2.3",
+    "pyarrow": "17.0.0",
+    "psycopg": "3.2.3",
+    "postgres_server_version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+  },
+  "partition_verification": {
+    "partition_key": "2025-05",
+    "rows_read": 2540,
+    "rows_expected": 2540,
+    "files_read": 1,
+    "files_total": 21,
+    "partitions_total": 21,
+    "pruned": true
+  },
+  "timings_seconds": {
+    "CSV": {
+      "write": [
+        0.921517,
+        0.857308,
+        0.914031,
+        0.911742,
+        0.871585
+      ],
+      "full_read": [
+        0.247694,
+        0.237822,
+        0.240935,
+        0.252587,
+        0.215445
+      ],
+      "filtered_read": [
+        0.270268,
+        0.227528,
+        0.228813,
+        0.227448,
+        0.236006
+      ]
+    },
+    "JSON Lines": {
+      "write": [
+        0.658333,
+        0.679342,
+        0.671641,
+        0.729852,
+        0.677613
+      ],
+      "full_read": [
+        0.6753,
+        0.633213,
+        0.62322,
+        0.628787,
+        0.703929
+      ],
+      "filtered_read": [
+        0.693101,
+        0.640081,
+        0.700248,
+        0.670267,
+        0.671911
+      ]
+    },
+    "Parquet": {
+      "write": [
+        0.098837,
+        0.087096,
+        0.088257,
+        0.103856,
+        0.097603
+      ],
+      "full_read": [
+        0.045523,
+        0.059383,
+        0.06056,
+        0.057673,
+        0.058182
+      ],
+      "filtered_read": [
+        0.025714,
+        0.026717,
+        0.025439,
+        0.025788,
+        0.0249
+      ]
+    },
+    "PostgreSQL": {
+      "write": [
+        0.788564,
+        0.767075,
+        0.727629,
+        0.736773,
+        0.759612
+      ],
+      "full_read": [
+        1.183748,
+        1.189582,
+        1.213357,
+        1.221219,
+        1.256545
+      ],
+      "filtered_read": [
+        0.193323,
+        0.206778,
+        0.190999,
+        0.207625,
+        0.215084
+      ]
+    },
+    "Parquet single file, one-month read": {
+      "filtered_read": [
+        0.066527,
+        0.063822,
+        0.057486,
+        0.055571,
+        0.06012
+      ]
+    },
+    "Parquet partitioned, one-month read": {
+      "write": [
+        0.118965,
+        0.111504,
+        0.112338,
+        0.123141,
+        0.104774
+      ],
+      "filtered_read": [
+        0.007416,
+        0.007831,
+        0.008114,
+        0.007293,
+        0.007346
+      ]
+    }
+  }
+}
